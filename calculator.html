@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee Calculator</title>
+<link rel="stylesheet" href="style.css">
+<script>
+let selectedCourses = [];
+
+function calculateTotal() {
+    selectedCourses = [];
+    let subtotal = 0;
+    document.querySelectorAll('input[type=checkbox]:checked').forEach(item => {
+        let course = item.nextSibling.textContent.trim();
+        let fee = parseInt(item.value);
+        selectedCourses.push({ name: course, fee: fee });
+        subtotal += fee;
+    });
+
+    let discountRate = 0;
+    if (selectedCourses.length === 2) discountRate = 0.05;
+    else if (selectedCourses.length === 3) discountRate = 0.10;
+    else if (selectedCourses.length > 3) discountRate = 0.15;
+
+    let discountAmount = subtotal * discountRate;
+    let discountedTotal = subtotal - discountAmount;
+    let vat = discountedTotal * 0.15;
+    let total = discountedTotal + vat;
+
+    // Display invoice
+    let invoice = "<h3>Invoice Summary</h3>";
+    invoice += "<ul>";
+    selectedCourses.forEach(course => {
+        invoice += `<li>${course.name}: R${course.fee}</li>`;
+    });
+    invoice += "</ul>";
+    invoice += `<p>Subtotal: R${subtotal.toFixed(2)}</p>`;
+    invoice += `<p>Discount (${(discountRate * 100).toFixed(0)}%): -R${discountAmount.toFixed(2)}</p>`;
+    invoice += `<p>VAT (15%): R${vat.toFixed(2)}</p>`;
+    invoice += `<p><strong>Quoted Total: R${total.toFixed(2)}</strong></p>`;
+
+    document.getElementById('invoice').innerHTML = invoice;
+}
+
+function submitForm() {
+    let name = document.getElementById('name').value;
+    let email = document.getElementById('email').value;
+    let phone = document.getElementById('phone').value;
+    if (!name || !email || !phone) {
+        alert("Please fill in all contact details.");
+        return;
+    }
+    if (selectedCourses.length === 0) {
+        alert("Please select at least one course.");
+        return;
+    }
+    alert("Thank you! A consultant will contact you soon to make a booking.");
+}
+</script>
+</head>
+<body>
+<header>
+    <h1>Calculate Total Fees</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="six-month.html">Six-Month</a></li>
+            <li><a href="six-week.html">Six-Week</a></li>
+            <li><a href="calculator.html" class="active">Calculate Fees</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section>
+    <form id="courseForm">
+        <h2>Contact Details</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br><br>
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" required><br><br>
+
+        <h2>Select the courses you want to take:</h2>
+        <label><input type="checkbox" value="1200"> First Aid (R1200)</label><br>
+        <label><input type="checkbox" value="1500"> Sewing (R1500)</label><br>
+        <label><input type="checkbox" value="1800"> Landscaping (R1800)</label><br>
+        <label><input type="checkbox" value="1000"> Life Skills (R1000)</label><br>
+        <label><input type="checkbox" value="800"> Child Minding (R800)</label><br>
+        <label><input type="checkbox" value="700"> Cooking (R700)</label><br>
+        <label><input type="checkbox" value="600"> Garden Maintenance (R600)</label><br><br>
+
+        <button type="button" onclick="calculateTotal()">Calculate</button>
+        <button type="button" onclick="submitForm()">Request Consultant Contact</button>
+        <div id="invoice"></div>
+    </form>
+</section>
+
+<footer>
+    <p>© 2025 Empowering the Nation | By Precious Radebe</p>
+</footer>
+</body>
+</html>
